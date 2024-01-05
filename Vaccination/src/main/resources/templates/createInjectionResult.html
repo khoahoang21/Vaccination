@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Basic Page Info -->
+    <meta charset="utf-8">
+    <title>Vaccine Management</title>
+
+    <!-- Site favicon -->
+    <link rel="shortcut icon" type="image/png" href="vendors/images/icon_protect_1.png">
+    <!--    <link rel="apple-touch-icon" sizes="180x180" href="vendors/images/apple-touch-icon.png">-->
+    <!--    <link rel="icon" type="image/png" sizes="32x32" href="vendors/images/favicon-32x32.png">-->
+    <!--    <link rel="icon" type="image/png" sizes="16x16" href="vendors/images/favicon-16x16.png">-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="vendors/styles/core.css">
+    <link rel="stylesheet" type="text/css" href="vendors/styles/icon-font.min.css">
+    <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="vendors/styles/style.css">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119386393-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'UA-119386393-1');
+    </script>
+</head>
+<body>
+
+<div th:replace="~{common/newsidebar :: newsidebar}"/>
+
+<div class="mobile-menu-overlay"></div>
+<div class="main-container">
+    <div class="pd-ltr-20 xs-pd-20-10">
+        <div class="min-height-200px">
+            <div class="pd-20 card-box mb-30">
+                <div class="clearfix">
+                    <div class="pull-left">
+                        <h4 class="text h2" style="color: #17a2b8;" >[[${title}]]</h4>
+                    </div>
+                </div>
+                <div class="pb-20 m-1g-2">
+                    <form th:action="@{/createInjectionResult}" method="POST" th:object="${creinjection}" id="injectionResultForm" onsubmit="return validateForm()">
+                        <input type="hidden" id="injectionResultID" name="injectionResultID" th:field="*{injectionResultID}">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="form-group">
+                                    <label>Customer:<strong class="text-danger">(*)</strong></label>
+                                    <select class="form-control" id="customerID" name="fullName" th:field="*{customer.customerID}" th:classappend="${#fields.hasErrors('customer')} ? 'is-invalid' : ''">
+                                        <option value="0">Select here</option>
+                                        <option  th:each="customer:${customerList}"
+                                                 th:value="${customer.customerID}"
+                                                 th:text="${customer.fullName}">
+                                        </option>
+                                    </select>
+                                    <span th:if="${#fields.hasErrors('customer')}" th:errors="*{customer}" class="text-danger"></span>
+                                </div>
+
+
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="prevention">Prevention:<strong class="text-danger">(*)</strong></label>
+                                <input type="text" class="form-control" id="prevention" name="prevention" th:field="*{prevention}" th:classappend="${#fields.hasErrors('prevention')} ? 'is-invalid' : ''">
+                                <span th:if="${#fields.hasErrors('prevention')}" th:errors="*{prevention}" class="text-danger"></span>
+
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="form-group">
+                                    <label>Vaccine Name:<strong class="text-danger">(*)</strong></label>
+                                    <select class="form-control" id="vaccineID" name="vaccineName" th:field="*{vaccine_r.vaccineID}" th:classappend="${#fields.hasErrors('vaccine_r')} ? 'is-invalid' : ''">
+                                        <option value=" ">Select here</option>
+                                        <option th:each="vaccine:${vaccineList}"
+                                                th:value="${vaccine.vaccineID}"
+                                                th:text="${vaccine.vaccineName}">
+                                        </option>
+                                    </select>
+                                    <span th:if="${#fields.hasErrors('vaccine_r')}" th:errors="*{vaccine_r}" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 col-sm-12">
+                                <div class="form-group">
+                                    <label for="numberOfInjection">Number of Injection<strong class="text-danger">(*)</strong></label>
+                                    <input th:type="number"  class="form-control" min="0" id="numberOfInjection" name="numberOfInjection" th:field="*{numberOfInjection}" th:classappend="${#fields.hasErrors('numberOfInjection')} ? 'is-invalid' : ''" placeholder="Enter Number of Injection">
+                                    <span th:if="${#fields.hasErrors('numberOfInjection')}" th:errors="*{numberOfInjection}" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-12">
+                                <div class="form-group">
+                                    <label for="injectionDate">Injection Date<strong class="text-danger">(*)</strong></label>
+                                    <input th:type="date" class="form-control" id="injectionDate" name="injectionDate" th:field="*{injectionDate}" th:classappend="${#fields.hasErrors('injectionDate')} ? 'is-invalid' : ''" placeholder="Enter Injection Date">
+                                    <span th:if="${#fields.hasErrors('injectionDate')}" th:errors="*{injectionDate}" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-12">
+                                <div class="form-group">
+                                    <label for="nextInjectionDate">Next Injection Date<strong class="text-danger">(*)</strong></label>
+                                    <input th:type="date" class="form-control" id="nextInjectionDate" name="nextInjectionDate" th:field="*{nextInjectionDate}" th:classappend="${#fields.hasErrors('nextInjectionDate')} ? 'is-invalid' : ''" placeholder="Enter Next Injection Date">
+                                    <span th:if="${#fields.hasErrors('nextInjectionDate')}" th:errors="*{nextInjectionDate}" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-12">
+                                <div class="form-group">
+                                    <label for="injectionPlace">Injection Place<strong class="text-danger">(*)</strong></label>
+                                    <input type="text" class="form-control" id="injectionPlace" name="injectionPlace" placeholder="Enter Injection Place" th:field="*{injectionPlace}" th:classappend="${#fields.hasErrors('injectionPlace')} ? 'is-invalid' : ''">
+                                    <span th:if="${#fields.hasErrors('injectionPlace')}" th:errors="*{injectionPlace}" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div th:if="${error}" class="alert alert-danger mr-4 ml-4 mt-4 text-center">
+                            <p >[[${error}]]</p>
+                        </div>
+                        <span id="idError" class="alert alert-danger mr-4 ml-4 mt-4 text-center" style="display: none"></span>
+                        <div class="alert alert-success mr-4 ml-4 mt-4 text-center" th:if="${successMessage}">
+                            <p th:text="${successMessage}"></p>
+                        </div>
+                        <!-- Thêm các trường khác tại đây -->
+                        <div class="text-left">
+                            <button type="submit" class="btn btn-primary" id="submitButton">Save</button>
+                            <button type="reset" class="btn btn-secondary" id="resetButton">Reset</button>
+                            <a class="btn btn-outline-danger" th:href="@{/injectionResult}">Cancel</a>
+                        </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- js -->
+<script src="vendors/scripts/core.js"></script>
+<script src="vendors/scripts/script.min.js"></script>
+<script src="vendors/scripts/layout-settings.js"></script>
+<script src="src/plugins/datatables/js/jquery.dataTables.min.js"></script>
+<script src="src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
+<script src="src/plugins/datatables/js/dataTables.responsive.min.js"></script>
+<!-- Datatable Setting js -->
+<script src="vendors/scripts/datatable-setting.js"></script>
+<script src="vendors/scripts/createInjectionResult.js"></script>
+</body>
+</html>

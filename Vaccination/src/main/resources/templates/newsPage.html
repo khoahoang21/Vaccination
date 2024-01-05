@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Basic Page Info -->
+    <meta charset="utf-8">
+    <title>Vaccine Management</title>
+
+    <!-- Site favicon -->
+    <link rel="shortcut icon" type="image/png" href="vendors/images/icon_protect_1.png">
+
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{vendors/styles/core.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{vendors/styles/icon-font.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{src/plugins/datatables/css/dataTables.bootstrap4.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{src/plugins/datatables/css/responsive.bootstrap4.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{vendors/styles/style.css}">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119386393-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-119386393-1');
+    </script>
+    <link rel="stylesheet" href="../static/vendors/styles/core.css">
+</head>
+<body>
+<div th:replace="~{common/newsidebar :: newsidebar}"/>
+
+<div class="mobile-menu-overlay"></div>
+<div class="main-container">
+    <div class="pd-ltr-20 xs-pd-20-10">
+        <div class="min-height-200px">
+            <div class="pd-20 card-box mb-30">
+                <div class="clearfix">
+                    <div class="pull-left">
+                        <h4 class="text h2 ml-0" style="color: #17a2b8;">NEWS</h4>
+                    </div>
+                </div>
+                <form th:object="${newspage}">
+
+
+                    <!-- Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h1 class="card-title text-center" th:text="${newspage.title}"></h1>
+                        </div>
+                        <div class="card-body">
+                            <h2 class="card-text mb-1" th:text="${newspage.preview}"></h2>
+                            <h3 class="card-text mt-2" style="font-size: 20px" th:text="${newspage.content}"> </h3>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="button" style="background-color: #f6aa2d"; onclick="window.history.back();return false;" class="btn btn-success mt-2" >Back</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- js -->
+<script src="vendors/scripts/core.js"></script>
+<script src="vendors/scripts/script.min.js"></script>
+<script src="vendors/scripts/layout-settings.js"></script>
+<script src="src/plugins/datatables/js/jquery.dataTables.min.js"></script>
+<script src="src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
+<script src="src/plugins/datatables/js/dataTables.responsive.min.js"></script>
+<!-- Datatable Setting js -->
+<script src="vendors/scripts/datatable-setting.js"></script>
+
+
+<!-- popup-->
+<div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificationModalLabel">Notification</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="notificationModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="confirmButton" type="button" class="btn btn-danger mt-2 mr-2">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    * {
+        margin: 0; padding: 0;
+    }
+    body {
+        font-size: 100%;
+    }
+    .card h1 {
+        cursor: pointer;
+        font-size: 35px;
+
+    }
+    .card-body h2, h3, h4 {
+        cursor: text;
+        font-family: "Georgia";
+        font-size: 30px;
+        font-weight: 400;
+        margin-left: 20px;
+    }
+</style>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Basic Page Info -->
+    <meta charset="utf-8">
+    <title>Vaccine Management</title>
+
+    <!-- Site favicon -->
+    <link rel="shortcut icon" type="image/png" href="vendors/images/icon_protect_1.png">
+    <!--    <link rel="apple-touch-icon" sizes="180x180" href="vendors/images/apple-touch-icon.png">-->
+    <!--    <link rel="icon" type="image/png" sizes="32x32" href="vendors/images/favicon-32x32.png">-->
+    <!--    <link rel="icon" type="image/png" sizes="16x16" href="vendors/images/favicon-16x16.png">-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="vendors/styles/core.css">
+    <link rel="stylesheet" type="text/css" href="vendors/styles/icon-font.min.css">
+    <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="vendors/styles/style.css">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119386393-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'UA-119386393-1');
+    </script>
+</head>
+<body onload="makeTableScroll();">
+
+<div th:replace="~{common/newsidebar :: newsidebar}"/>
+
+<div class="mobile-menu-overlay"></div>
+
+<div class="main-container">
+
+    <div class="pd-ltr-20">
+        <div class="card-box pd-20 height-100-p mb-30">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <img src="vendors/images/icon_protect_1.png" alt="">
+                </div>
+                <div class="col-md-8">
+                    <h4 class="font-30 weight-500 mb-10 text-capitalize">
+                        Hello <div class="weight-600 font-25 text" style="color: #17a2b8" th:text="${#authentication.principal.getEmployee().getEmployeeName()}"></div>
+                    </h4>
+                    <p class="font-18 max-width-600">Wellcome To Vaccine Management</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-8 mb-30">
+                <div class="card-box height-100-p pd-20">
+                    <h4 class="text h2" style="color: #17a2b8">Injection Result Chart </h4>
+                    <div class="da-card-content mr-0" >
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+                        <canvas id="bar" style="width: 50%"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 mb-30">
+                <div class="card-box height-100-p pd-20">
+                    <a class="text h2" style="color: #17a2b8">News</a>
+                    <div  class="scrollingTable mt-4">
+                        <table id="myTable" class="dataTable table stripe hover ">
+                            <tbody>
+                            <tr th:each="news : ${newsList}">
+                                <td>
+                                    <span class="micoN" id="i">📰 <a id="a" th:href="@{/news(newsId=${news.newsId})}"  th:text="${#strings.length(news.title) > 30 ? #strings.substring(news.title, 0, 30) + '...' : news.title}" th:title="${news.preview}"></a></span>                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- js -->
+<script src="vendors/scripts/core.js"></script>
+<script src="vendors/scripts/script.min.js"></script>
+<script src="vendors/scripts/process.js"></script>
+<script src="vendors/scripts/layout-settings.js"></script>
+<script src="src/plugins/apexcharts/apexcharts.min.js"></script>
+<script src="src/plugins/datatables/js/jquery.dataTables.min.js"></script>
+<script src="src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
+<script src="src/plugins/datatables/js/dataTables.responsive.min.js"></script>
+<script src="src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
+<script src="vendors/scripts/dashboard.js"></script>
+<!--<script src="vendors/scripts/homePage.js"></script>-->
+
+
+<script type="text/javascript">
+    function makeTableScroll() {
+        // Constant retrieved from server-side via JSP
+        var maxRows = 4;
+
+        var table = document.getElementById('myTable');
+        var wrapper = table.parentNode;
+        var rowsInTable = table.rows.length;
+        var height = 0;
+        if (rowsInTable > maxRows) {
+            for (var i = 0; i < maxRows; i++) {
+                height += table.rows[i].clientHeight;
+            }
+            wrapper.style.height = height + "px";
+        }
+    }
+</script>
+
+<script th:inline="javascript">
+
+    //Data from Controller
+    var Data = [[${injectionResultList}]];  //[Month,Value]
+
+    var allMonths = ["January", "February", "March", "April", "May",
+        "June", "July", "August", "September", "October", "November", "December"];
+
+    //Array for value
+    var ValueData = new Array(12).fill(0);
+
+    // Update data into ValueData
+    Data.forEach(function(item) {
+        var monthIndex = allMonths.indexOf(item.split(',')[0]);  //Split from [Month,Value] to only [Month]
+        var count = parseInt(item.split(',')[1]);                //Parsing value into int
+        if (monthIndex !== -1) {                                 //If Month from Data is match with
+            ValueData[monthIndex] = count;                      //monthIndex then set the Value from Data into ValueData[monthIndex] by monthIndex
+        }
+    });
+
+    // Generate barchart
+    var chartData = {
+        labels: allMonths,
+        datasets: [{
+            label: "Number Of Injection",
+            data: ValueData,
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            borderColor: 'rgba(75, 192, 192, 3)',
+            borderWidth: 1
+        }]
+    };
+
+    var ctx = document.getElementById("bar").getContext("2d");
+    new Chart(ctx, {
+        type: 'bar',
+        data: chartData
+    });
+
+
+</script>
+<!-- Chart JS  -->
+<script th:inline="javascript">
+
+    //Data from Controller
+    var Data = [[${injectionResultList}]];  //[Month,Value]
+
+    var allMonths = ["January", "February", "March", "April", "May",
+        "June", "July", "August", "September", "October", "November", "December"];
+
+    //Array for value
+    var ValueData = new Array(12).fill(0);
+
+    // Update data into ValueData
+    Data.forEach(function(item) {
+        var monthIndex = allMonths.indexOf(item.split(',')[0]);  //Split from [Month,Value] to only [Month]
+        var count = parseInt(item.split(',')[1]);                //Parsing value into int
+        if (monthIndex !== -1) {                                 //If Month from Data is match with
+            ValueData[monthIndex] = count;                      //monthIndex then set the Value from Data into ValueData[monthIndex] by monthIndex
+        }
+    });
+
+    // Generate barchart
+    var chartData = {
+        labels: allMonths,
+        datasets: [{
+            label: "Number Of Injection",
+            data: ValueData,
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            borderColor: 'rgba(75, 192, 192, 3)',
+            borderWidth: 1
+        }]
+    };
+
+    var ctx = document.getElementById("bar").getContext("2d");
+    new Chart(ctx, {
+        type: 'bar',
+        data: chartData
+    });
+
+
+</script>
+
+</body>
+</html>
+<style>
+    #i{
+        font-size: 20px;
+        color: rgba(75, 192, 192, 3);
+    }
+
+    #a{
+        font-size: 18px;
+    }
+</style>

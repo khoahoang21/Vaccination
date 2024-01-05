@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Basic Page Info -->
+    <meta charset="utf-8">
+    <title>Vaccine Management</title>
+
+    <!-- Site favicon -->
+    <link rel="shortcut icon" type="image/png" href="vendors/images/icon_protect_1.png">
+    <!--    <link rel="apple-touch-icon" sizes="180x180" href="vendors/images/apple-touch-icon.png">-->
+    <!--    <link rel="icon" type="image/png" sizes="32x32" href="vendors/images/favicon-32x32.png">-->
+    <!--    <link rel="icon" type="image/png" sizes="16x16" href="vendors/images/favicon-16x16.png">-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="vendors/styles/core.css">
+    <link rel="stylesheet" type="text/css" href="vendors/styles/icon-font.min.css">
+    <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="vendors/styles/style.css">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119386393-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'UA-119386393-1');
+    </script>
+</head>
+<body>
+
+<div th:replace="~{common/newsidebar :: newsidebar}"/>
+
+<div class="mobile-menu-overlay"></div>
+<div class="main-container">
+    <div class="pd-ltr-20 xs-pd-20-10">
+        <div class="min-height-200px">
+            <div class="pd-20 card-box mb-30">
+                <div class="clearfix">
+                    <div class="pull-left">
+                        <h4 class="text h2" style="color: #17a2b8;" th:if="${pageTitle}">[[${pageTitle}]]</h4>
+                    </div>
+                </div>
+                <form method="post" th:action="@{/saveIS}" th:object="${injectionSchedule}" onsubmit="return validateForm()">
+                    <input type="hidden" id="injectionScheduleID" name="injectionScheduleID" th:field="*{injectionScheduleID}">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-12 col-md-4 col-form-label">Vaccine<strong style="color: red">(*)</strong></label>
+                                <select class="custom-select col-12" id="vaccineID" name="vaccineName" th:field="*{vaccine_s.vaccineID}" th:classappend="${#fields.hasErrors('vaccine_s')} ? 'is-invalid' : ''"  >
+                                    <option value="">Select here</option>
+                                    <option th:each="vaccine : ${vaccineList}"
+                                            th:value="${vaccine.vaccineID}"
+                                            th:text="${vaccine.VaccineName}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-4 col-form-label">From<strong class="text-danger">(*)</strong></label>
+                                <input th:type="date" th:field="*{startDate}" class="form-control" th:classappend="${#fields.hasErrors('startDate')} ? 'is-invalid' : ''" />
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-4 col-form-label">To<strong class="text-danger">(*)</strong></strong></label>
+                                <input th:type="date" th:field="*{endDate}" class="form-control" th:classappend="${#fields.hasErrors('endDate')} ? 'is-invalid' : ''" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <span th:if="${#fields.hasErrors('vaccine_s')}" th:errors="*{vaccine_s}" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-12">
+                            <div class="form-group">
+                                <span th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger"></span>
+                                <p class="text-danger">[[${error}]]</p>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-sm-12">
+                            <div class="form-group">
+                                <span th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-4 col-form-label">Place<strong class="text-danger">(*)</strong></label>
+                                <textarea type="text" th:field="*{place}" class="form-control" th:classappend="${#fields.hasErrors('place')} ? 'is-invalid' : ''" ></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-8 col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-4 col-form-label">Note</label>
+                                <textarea type="text" th:field="*{note}" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-12">
+                            <div class="form-group">
+                                <span th:if="${#fields.hasErrors('place')}" th:errors="*{place}" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-8 col-sm-12">
+                            <div class="form-group">
+                            </div>
+                        </div>
+
+                    </div>
+                    <span id="idError" class="alert alert-danger mr-4 ml-4 text-center mt-4" style="display: none"></span>
+                    <div class="text-left">
+                        <button type="submit" class="btn btn-success">Save</button>
+                        <button type="reset" class="btn btn-info">Reset</button>
+                        <a type="button" style="background-color: #f6aa2d" class="btn btn-dark" th:href="@{/injectionScheduleList}">Cancel</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- js -->
+<script src="vendors/scripts/core.js"></script>
+<script src="vendors/scripts/script.min.js"></script>
+<script src="vendors/scripts/layout-settings.js"></script>
+<script src="src/plugins/datatables/js/jquery.dataTables.min.js"></script>
+<script src="src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
+<script src="src/plugins/datatables/js/dataTables.responsive.min.js"></script>
+<!-- Datatable Setting js -->
+<script src="vendors/scripts/datatable-setting.js"></script>
+<script src="vendors/scripts/createInjectionSchedule.js"></script>
+
+</body>
+</html>
