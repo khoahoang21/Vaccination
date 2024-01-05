@@ -20,4 +20,5 @@ The Vaccination Management will be a Web application that manages vaccination fo
 ### Contact
 
 For any inquiries or support, please contact us at dangkhoahoang39@gmail.com.
+
 Thank you for your interest in the Vaccination Management repository!
