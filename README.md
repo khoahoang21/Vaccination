@@ -2,8 +2,6 @@
 
 ### Welcome to the Vaccination Management repository!
 
-Welcome to the FPT University Asset Management System repository!
-
 ### Overview
 
 The Vaccination Management will be a Web application that manages vaccination for a preventive medicine center. The application is based on the urgent need of vaccination management for a large number of users. This application helps the manual work optimize by simple, time-saving and efficient operation.
