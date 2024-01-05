@@ -10,12 +10,12 @@ The Vaccination Management will be a Web application that manages vaccination fo
 
 ### Features
 
-- **•	Vaccine management:** This function manages vaccines and vaccine types.
-- **•	Vaccination schedule:** Schedule vaccinations and output vaccination times.
-- **•	Employee management:** Manage Vaccination staff.
-- **•	Customer management:** Manage customers who’re about to be and have been vaccinated.
-- **•	News:** Update news about vaccines.
-- **•	Reports:** Report the vaccines that have been administered.
+- **	Vaccine management:** This function manages vaccines and vaccine types.
+- **	Vaccination schedule:** Schedule vaccinations and output vaccination times.
+- **	Employee management:** Manage Vaccination staff.
+- **	Customer management:** Manage customers who’re about to be and have been vaccinated.
+- **	News:** Update news about vaccines.
+- **	Reports:** Report the vaccines that have been administered.
 
 ### Contact
 
